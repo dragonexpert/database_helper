@@ -19,6 +19,13 @@ class mysqli_extender extends DB_MySQLi
     private $limit_safe = 0;
 
     /**
+     * @var array An array for the name of scripts that should be skipped.
+     * Use $config['database']['limit_skip'] = array("file1.php", "file2.php");
+     * Default is array("search.php")
+     */
+    private $limit_skip = array();
+
+    /**
      * @var int If a table can be dropped.  Used with the query method to prevent a table from being dropped
      * either accidentally or maliciously.  Only calls to the drop_table method can execute this query.
      */
@@ -55,6 +62,19 @@ class mysqli_extender extends DB_MySQLi
         else
         {
             $this->max_limit = 50;
+        }
+        if(isset($config['database']['limit_skip']))
+        {
+            $this->limit_skip = $config['database']['limit_skip'];
+        }
+        else
+        {
+            $this->limit_skip[0] = "search.php";
+        }
+        // THIS_SCRIPT is defined in global.php
+        if(in_array(THIS_SCRIPT, $this->limit_skip))
+        {
+            $this->limit_safe = 2;
         }
         $lang->load("database_helper");
     }
@@ -220,9 +240,16 @@ class mysqli_extender extends DB_MySQLi
         {
             $sql .= " WHERE " . $conditions;
         }
-        $this->limit_safe = 1;
-        $query = $this->query($sql);
-        $this->limit_safe = 0;
+        if($this->limit_safe != 2)
+        {
+            $this->limit_safe = 1;
+            $query = $this->query($sql);
+            $this->limit_safe = 0;
+        }
+        else
+        {
+            $query = $this->query($sql);
+        }
         return $this->fetch_field($query, "total");
     }
 
