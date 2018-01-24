@@ -4,10 +4,13 @@ for the core product and would force a huge rewrite.
 
 ## Supported Database Extensions
 * MySQLi
+* MySQL
+* PostGreSQL ( Note: Untested. )
+* SQLite ( Note: Untested. )
 
 ## Key Methods  
-* add_foreign_key - adds a foreign key.  
-* drop_foreign_key - removes a foreign key.  
+* add_foreign_key - adds a foreign key.  Not supported in SQLite.
+* drop_foreign_key - removes a foreign key.  Not supported in SQLite.
 * get_foreign_keys - gets all foreign keys. ( Note only works on foreign keys created with add_foreign_key ).  
 * count_query - performs a select count() and returns the result.  
 * fetch_clean_array - similar to fetch_array, but calls htmlspecialchars_uni on the result before returning it.  
@@ -20,6 +23,7 @@ for the core product and would force a huge rewrite.
 * SELECT statements are scanned for a LIMIT clause.  If one is not present, it prepends the value of $config['database']['limit'].
 * If not set, it will default to 50 so you don't overload memory.
 * If a limit clause is set, it verifies that it is within the allowed limit.
+* Specific pages can be set to ignore the LIMIT CLause by defining $config['database']['limit_skip'] as an array and adding the value of the constant THIS_SCRIPT for each page.  Default is search.php.
 
 ## Installation
 1) Upload all files to their directories.
@@ -30,5 +34,5 @@ for the core product and would force a huge rewrite.
 * The plugin has a priority rate for global_start designed to execute first.  Make sure any plugin hooks use a value higher than 0.
 
 ## Contributing
-* The main way contributions can be made is by creating more files to support other database systems.
 * Feature suggestions and bugs can be reported here by opening an issue.
+* Creating a way to add a foreign key to an existing table in SQLite.
