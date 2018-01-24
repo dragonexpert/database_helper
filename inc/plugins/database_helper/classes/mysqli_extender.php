@@ -157,9 +157,9 @@ class mysqli_extender extends DB_MySQLi
      */
     public function add_foreign_key($name, $parent_table, $parent_column, $child_table, $child_column, $on_update="CASCADE", $on_delete="CASCADE")
     {
-        $sql = "ALTER TABLE `" . TABLE_PREFIX . $parent_table . "` ADD CONSTRAINT `" . $name .
-            "` FOREIGN KEY (`" . $parent_column . "`) 
-            REFERENCES `" . TABLE_PREFIX . $child_table . "` (`" . $child_column . "`)";
+        $sql = "ALTER TABLE `" . TABLE_PREFIX . $child_table . "` ADD CONSTRAINT `" . $name .
+            "` FOREIGN KEY (`" . $child_column . "`) 
+            REFERENCES `" . TABLE_PREFIX . $parent_table . "` (`" . $parent_column . "`)";
         $allowed_actions = array("restrict", "cascade", "set null", "no action", "set default");
         $new_foreign_key = array(
             "constraint_name" => $name,
