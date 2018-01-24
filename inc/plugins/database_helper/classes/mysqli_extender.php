@@ -180,7 +180,9 @@ class mysqli_extender extends DB_MySQLi
     public function drop_foreign_key($name, $table)
     {
         $query = "ALTER TABLE " . TABLE_PREFIX . $table . " DROP FOREIGN KEY " . $name;
-        return $this->write_query($query);
+        $query = $this->write_query($query);
+        $this->delete_query("foreign_keys", "constraint_name='" . $name . "' AND parent_table='" . $table . "'");
+        return $query;
     }
 
     /**
