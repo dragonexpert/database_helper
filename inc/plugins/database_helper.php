@@ -5,9 +5,18 @@
  * Date: 1/23/2018
  * Time: 9:51 PM
  */
-
+if(!defined("IN_MYBB"))
+{
+    die("Direct access to this file is not allowed.");
+}
 /* We use 0 for priority because others will depend on it. */
 $plugins->add_hook("global_start", "database_helper_start", 0);
+if(defined("IN_ADMINCP"))
+{
+    $plugins->add_hook("admin_tools_menu_logs", "database_helper_admin_tools_menu_logs");
+    $plugins->add_hook("admin_tools_action_handler", "database_helper_admin_tools_action_handler");
+    $plugins->add_hook("admin_tools_permissions", "database_helper_admin_tools_permissions");
+}
 
 function database_helper_info()
 {
@@ -17,7 +26,7 @@ function database_helper_info()
         "name" => $lang->database_helper,
         "description" => $lang->database_helper_description,
         "author" => "Mark Janssen",
-        "version" => "1.0",
+        "version" => "2.0",
         "codename" => "database_helper",
         "compatibility" => "18*"
     );
@@ -71,4 +80,30 @@ function database_helper_uninstall()
     {
         $db->drop_table("foreign_keys");
     }
+}
+
+function database_helper_admin_tools_menu_logs(&$sub_menu)
+{
+    global $lang;
+    $lang->load("database_helper");
+    $sub_menu[78] = array(
+        "id" => "slow_query_log",
+        "title" => $lang->database_helper_slow_query_log,
+        "link" => "index.php?module=tools-slow_query_log"
+    );
+}
+
+function database_helper_admin_tools_action_handler(&$actions)
+{
+    $actions['slow_query_log'] = array(
+        "active" => "slow_query_log",
+        "file" => "slow_query_log.php"
+    );
+}
+
+function database_helper_admin_tools_permissions(&$admin_permissions)
+{
+    global $lang;
+    $lang->load("database_helper");
+    $admin_permissions['slow_query_log'] = $lang->database_helper_can_view_slow_query_log;
 }

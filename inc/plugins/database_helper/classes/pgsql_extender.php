@@ -130,7 +130,14 @@ class pgsql_extender extends DB_PgSQL
                 $string .= " LIMIT " . $this->max_limit;
             }
         }
+        $beforetime = microtime();
         $query = parent::query($string, $hide_errors, $write);
+        $aftertime = microtime();
+        $speed = $aftertime - $beforetime;
+        if($speed >= 2)
+        {
+            $this->log_slow_query($string, $speed);
+        }
         return $query;
     }
 
@@ -345,5 +352,17 @@ class pgsql_extender extends DB_PgSQL
     {
         $result = parent::fetch_field($resource, $field, $row);
         return htmlspecialchars_uni($result);
+    }
+
+    /**
+     * @param string $string The query string.
+     * @param float $execution_time The time in microseconds that it took to execute.
+     */
+    public function log_slow_query($string, $execution_time)
+    {
+        $fopen = fopen(MYBB_ROOT . "/slowquery.log", "a");
+        fwrite($fopen, "<slowquery>\n\t<dateline>" . TIME_NOW . "</dateline>\n\t<query>" . $string . "</query>\n\t"
+            . "<execution_time>" . format_time_duration($execution_time) . "</execution_time>\n</slowquery>\n\n");
+        fclose($fopen);
     }
 }

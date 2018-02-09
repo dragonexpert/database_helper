@@ -130,7 +130,14 @@ class mysqli_extender extends DB_MySQLi
                 $string .= " LIMIT " . $this->max_limit;
             }
         }
+        $beforetime = microtime();
         $query = parent::query($string, $hide_errors, $write);
+        $aftertime = microtime();
+        $speed = $aftertime - $beforetime;
+        if($speed >= 2)
+        {
+            $this->log_slow_query($string, $speed);
+        }
         return $query;
     }
 
@@ -345,5 +352,32 @@ class mysqli_extender extends DB_MySQLi
     {
         $result = parent::fetch_field($resource, $field, $row);
         return htmlspecialchars_uni($result);
+    }
+
+    /**
+     * @param string $setting The name of the setting.
+     * @return bool Whether the setting exists.
+     */
+    public function setting_exists($setting)
+    {
+        $query = $this->simple_select("settings", "sid", "name='" . $this->escape_string($setting) . "'");
+        $sid = $this->fetch_field($query, "sid");
+        if($sid)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $string The query string.
+     * @param float $execution_time The time in microseconds that it took to execute.
+     */
+    public function log_slow_query($string, $execution_time)
+    {
+        $fopen = fopen(MYBB_ROOT . "/slowquery.log", "a");
+        fwrite($fopen, "<slowquery>\n\t<dateline>" . TIME_NOW . "</dateline>\n\t<query>" . $string . "</query>\n\t"
+        . "<execution_time>" . format_time_duration($execution_time) . "</execution_time>\n</slowquery>\n\n");
+        fclose($fopen);
     }
 }
