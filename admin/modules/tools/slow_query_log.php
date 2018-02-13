@@ -58,7 +58,7 @@ foreach($error_array as $entry)
     $exstring[2] = preg_replace("/\A(.*?)<execution_time>(.*)<\/execution_time>(.*?)\Z/is", "$2", $exstring[3]);
     $exstring[3] = preg_replace("/\A(.*?)<file>(.*?)<\/file>(.*?)\Z/is", "$2", $exstring[4]);
     $exstring[4] = preg_replace("/\A(.*?)<this_script>(.*?)<\/this_script>(.*?)\Z/is", "$2", $exstring[5]);
-    if(count($exstring < 5))
+    if(count($exstring) < 5)
     {
         $exstring[3] = $exstring[4] = $lang->database_helper_unknown;
     }
