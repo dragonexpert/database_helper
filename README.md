@@ -23,8 +23,8 @@ for the core product and would force a huge rewrite.
 * SELECT statements are scanned for a LIMIT clause.  If one is not present, it prepends the value of $config['database']['limit'].
 * If not set, it will default to 50 so you don't overload memory.
 * If a limit clause is set, it verifies that it is within the allowed limit.
-* Specific pages can be set to ignore the LIMIT CLause by defining $config['database']['limit_skip'] as an array and adding the value of the constant THIS_SCRIPT for each page.  Default is search.php.
-* Logs any query that takes more than 2 seconds as long as $db->helper is used. Log is conveniently located in Tools & Maintenance.  
+* Specific pages can be set to ignore the LIMIT Clause by defining $config['database']['limit_skip'] as an array and adding the value of the constant THIS_SCRIPT for each page.  Default is search.php.
+* Logs any query that takes more than 2 seconds as long as $db->helper is used. Log is conveniently located in Tools & Maintenance. Now it also logs the value of the constant THIS_SCIPT and the php file that generated the slow query.    
 
 ## Installation
 1) Upload all files to their directories.
