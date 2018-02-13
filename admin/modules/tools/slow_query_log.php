@@ -47,18 +47,29 @@ $table->construct_header($lang->database_helper_date);
 $table->construct_header($lang->database_helper_time);
 $table->construct_header($lang->database_helper_query);
 $table->construct_header($lang->database_helper_execution_time);
+$table->construct_header($lang->database_helper_file);
+$table->construct_header($lang->database_helper_this_script);
 $table->construct_row();
 foreach($error_array as $entry)
 {
-    $string = preg_replace("/\A<slowquery>\n\t<dateline>([0-9]+)<\/dateline>\n\t<query>(.*)<\/query>"
-    . "\n\t<execution_time>(.*)<\/execution_time>\n<\/slowquery>(.*?)\Z/is", "$1--$2--$3", $entry);
-    $exstring = explode("--", $string);
-    $date = my_date($mybb->settings['dateformat'], $exstring[0]);
-    $time = my_date($mybb->settings['timeformat'], $exstring[0]);
+    $exstring = explode("\n", $entry);
+    $exstring[0] = preg_replace("/\A(.*?)<dateline>([0-9]+)<\/dateline>(.*?)\Z/is", "$2", $exstring[1]);
+    $exstring[1] = preg_replace("/\A(.*?)<query>(.*)<\/query>(.*?)\Z/is", "$2", $exstring[2]);
+    $exstring[2] = preg_replace("/\A(.*?)<execution_time>(.*)<\/execution_time>(.*?)\Z/is", "$2", $exstring[3]);
+    $exstring[3] = preg_replace("/\A(.*?)<file>(.*?)<\/file>(.*?)\Z/is", "$2", $exstring[4]);
+    $exstring[4] = preg_replace("/\A(.*?)<this_script>(.*?)<\/this_script>(.*?)\Z/is", "$2", $exstring[5]);
+    if(count($exstring < 5))
+    {
+        $exstring[3] = $exstring[4] = $lang->database_helper_unknown;
+    }
+    $date = my_date($mybb->settings['dateformat'], (int) $exstring[0]);
+    $time = my_date($mybb->settings['timeformat'], (int) $exstring[0]);
     $table->construct_cell($date);
     $table->construct_cell($time);
     $table->construct_cell($exstring[1]);
     $table->construct_cell($exstring[2]);
+    $table->construct_cell($exstring[3]);
+    $table->construct_cell($exstring[4]);
     $table->construct_row();
 }
 $table->output($lang->database_helper_slow_query_log);

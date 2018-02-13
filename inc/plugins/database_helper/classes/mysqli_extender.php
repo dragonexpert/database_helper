@@ -376,8 +376,18 @@ class mysqli_extender extends DB_MySQLi
     public function log_slow_query($string, $execution_time)
     {
         $fopen = fopen(MYBB_ROOT . "/slowquery.log", "a");
+        $file = $_SERVER['PHP_SELF'];
+        if(defined("THIS_SCRIPT"))
+        {
+            $this_script = THIS_SCRIPT;
+        }
+        else
+        {
+            $this_script = $_SERVER['PHP_SELF'];
+        }
         fwrite($fopen, "<slowquery>\n\t<dateline>" . TIME_NOW . "</dateline>\n\t<query>" . $string . "</query>\n\t"
-        . "<execution_time>" . format_time_duration($execution_time) . "</execution_time>\n</slowquery>\n\n");
+            . "<execution_time>" . format_time_duration($execution_time) . "</execution_time>\n\t<file>" . $file . "</file>"
+            . "\n\t<this_script>" . $this_script . "</this_script>\n</slowquery>\n\n");
         fclose($fopen);
     }
 }
