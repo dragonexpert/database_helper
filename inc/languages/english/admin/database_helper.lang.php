@@ -17,3 +17,6 @@ $l['database_helper_date'] = "Date";
 $l['database_helper_time'] = "Time";
 $l['database_helper_query'] = "Query";
 $l['database_helper_execution_time'] = "Execution Time";
+$l['database_helper_unknown'] = "Unknown";
+$l['database_helper_file'] = "File";
+$l['database_helper_this_script'] = "THIS_SCRIPT";
